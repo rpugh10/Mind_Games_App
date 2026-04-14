@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Mind_Games_App</string>
+    <string name="moves">Moves: 0</string>
+    <string name="timer">Timer: 0s</string>
+    <string name="selectDif">Select Difficulty</string>
+    <string name="easy">Easy</string>
+    <string name="medium">Medium</string>
+    <string name="hard">Hard</string>
 </resources>
