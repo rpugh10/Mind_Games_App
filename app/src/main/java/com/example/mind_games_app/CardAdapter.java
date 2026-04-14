@@ -1,5 +1,6 @@
 package com.example.mind_games_app;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +13,15 @@ import java.util.ArrayList;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder>{
 
-    ArrayList<Integer> cards;
+    ArrayList<Card> cards;
+    OnMatchListener listener;
 
-    public CardAdapter(ArrayList<Integer> cards){
+    Card firstCard = null;
+    Card secondCard = null;
+
+    public CardAdapter(ArrayList<Card> cards, OnMatchListener listener){
         this.cards = cards;
+        this.listener = listener;
     }
 
     @NonNull
@@ -28,7 +34,48 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
-        holder.cardText.setText(String.valueOf(cards.get(position)));
+        //Used AI to help me figure this part out
+        Card card = cards.get(position);
+
+        if(card.faceUp || card.isMatched){
+            holder.cardText.setText(String.valueOf(card.value));
+        }else{
+            holder.cardText.setText("");
+        }
+
+        holder.itemView.setOnClickListener(v ->{
+            if(card.faceUp || card.isMatched) return;
+
+            card.faceUp = true;
+            notifyItemChanged(position);
+
+            if(firstCard == null){
+                firstCard = card;
+            }else if(secondCard == null){
+                secondCard = card;
+                listener.onMove();
+
+                if(firstCard.value == secondCard.value){
+                    firstCard.isMatched = true;
+                    secondCard.isMatched = true;
+
+                    listener.onMatch();
+
+                    firstCard = null;
+                    secondCard = null;
+                }else{
+                    new Handler().postDelayed(() -> {
+                        firstCard.faceUp =false;
+                        secondCard.faceUp =false;
+
+                        notifyDataSetChanged();
+
+                        firstCard = null;
+                        secondCard = null;
+                    }, 1000);
+                }
+            }
+        });
     }
 
     @Override
@@ -42,5 +89,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             super(itemView);
             cardText = itemView.findViewById(R.id.cardText);
         }
+    }
+
+    public interface OnMatchListener{
+        void onMatch();
+        void onMove();
     }
 }

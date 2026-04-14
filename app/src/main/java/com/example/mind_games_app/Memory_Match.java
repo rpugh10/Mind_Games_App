@@ -1,7 +1,10 @@
 package com.example.mind_games_app;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,10 +17,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Memory_Match extends AppCompatActivity {
+public class Memory_Match extends AppCompatActivity implements CardAdapter.OnMatchListener {
 
     RecyclerView recyclerView;
     String difficulty;
+    int matchedPair = 0;
+    int columns;
+    int totalCards;
+    int pairs;
+    int moves;
+
+    TextView movesDisplay;
+    TextView timerDisplay;
+    Handler timerHandle = new Handler(); //Searched up a Youtube video about implementing a timer
+    int seconds = 0;
+    boolean running = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +47,10 @@ public class Memory_Match extends AppCompatActivity {
         difficulty = getIntent().getStringExtra("difficulty");
 
         recyclerView = findViewById(R.id.recyclerView);
-        int columns;
-        int totalCards;
-        int pairs;
+        movesDisplay = findViewById(R.id.moves);
+        timerDisplay = findViewById(R.id.timer);
+        startTimer();
+
 
         if(difficulty == null){
             difficulty = "easy";
@@ -56,17 +71,56 @@ public class Memory_Match extends AppCompatActivity {
         GridLayoutManager layoutManager = new GridLayoutManager(this, columns);
         recyclerView.setLayoutManager(layoutManager);
 
-        ArrayList<Integer> cards = new ArrayList<>();
+        ArrayList<Card> cards = new ArrayList<>();
         for (int i = 1; i <= pairs; i++){
-            cards.add(i);
-            cards.add(i);
+            cards.add(new Card(i));
+            cards.add(new Card(i));
         }
 
         Log.d("DEBUG", "Cards size: " + cards.size());
 
         Collections.shuffle(cards); //Found this method online
 
-        CardAdapter adapter = new CardAdapter(cards);
+        CardAdapter adapter = new CardAdapter(cards, this);
         recyclerView.setAdapter(adapter);
+    }
+
+    private void startTimer() {
+        running = true;
+
+        timerHandle.post(new Runnable() {
+            @Override
+            public void run() {
+                if(running){
+                    seconds++;
+
+                    int min = seconds / 60;
+                    int sec = seconds % 60;
+                    timerDisplay.setText(String.format("Time: %02d:%02d", min, sec));
+
+                    timerHandle.postDelayed(this, 1000);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onMatch(){
+        matchedPair++;
+
+        if(matchedPair == pairs){
+            gameWon();
+        }
+    }
+
+    @Override
+    public void onMove(){
+        moves++;
+        movesDisplay.setText("Moves: " + moves);
+    }
+
+    public void gameWon(){
+        running = false;
+        Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
     }
 }
