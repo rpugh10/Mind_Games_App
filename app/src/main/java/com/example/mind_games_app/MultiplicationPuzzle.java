@@ -1,5 +1,7 @@
 package com.example.mind_games_app;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -15,6 +17,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -62,7 +69,16 @@ public class MultiplicationPuzzle extends AppCompatActivity {
         startButton = findViewById(R.id.startButton);
         answerText = findViewById(R.id.answerText);
 
-        difficulty = 3;
+        SharedPreferences prefs = getSharedPreferences("Settings", MODE_PRIVATE);
+        String currentDiff = prefs.getString("difficulty", "easy");
+
+        if (currentDiff.equals("easy")) {
+            difficulty = 1;
+        } else if (currentDiff.equals("medium")) {
+            difficulty = 2;
+        } else {
+            difficulty = 3;
+        }
 
         gameLooping = false;
 
@@ -79,7 +95,8 @@ public class MultiplicationPuzzle extends AppCompatActivity {
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // SET RETURN TO MENU INTENT HERE
+                Intent i = new Intent(MultiplicationPuzzle.this, MenuScreen.class);
+                startActivity(i);
             }
         });
 
@@ -381,9 +398,39 @@ public class MultiplicationPuzzle extends AppCompatActivity {
                                         }
                                         else {
                                             gameLooping = false;
-                                            if (highScore < points) {
-                                                highScore = points;
+                                            SharedPreferences prefs = getSharedPreferences("Leaderboard", MODE_PRIVATE);
+
+
+                                            Set<String> scoreSet = prefs.getStringSet("multiplication_highscore", new HashSet<>());
+
+
+                                            Set<String> newSet = new HashSet<>(scoreSet);
+
+
+                                            newSet.add(String.valueOf(highScore));
+
+
+                                            List<Integer> scoreList = new ArrayList<>();
+                                            for (String s : newSet) {
+                                                scoreList.add(Integer.parseInt(s));
                                             }
+
+
+                                            Collections.sort(scoreList, Collections.reverseOrder());
+
+
+                                            if (scoreList.size() > 5) {
+                                                scoreList = scoreList.subList(0, 5);
+                                            }
+
+
+                                            Set<String> topSet = new HashSet<>();
+                                            for (int s : scoreList) {
+                                                topSet.add(String.valueOf(s));
+                                            }
+
+
+                                            prefs.edit().putStringSet("memory_scores", topSet).apply();
                                             // SHOW THE GAME RESULT SCREEN HERE
                                         }
                                     }

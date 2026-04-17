@@ -1,6 +1,7 @@
 package com.example.mind_games_app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -34,34 +35,24 @@ public class Difficulty_Selection extends AppCompatActivity {
         medButton = findViewById(R.id.medButton);
         hardButton = findViewById(R.id.hardButton);
 
-        easyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                difficulty = "easy";
-                Intent i = new Intent(Difficulty_Selection.this, Memory_Match.class);
-                i.putExtra("difficulty", difficulty);
-                startActivity(i);
-            }
+        easyButton.setOnClickListener(v -> {
+            saveDifficulty("easy");
+            startActivity(new Intent(this, MenuScreen.class));
         });
 
-        medButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                difficulty = "medium";
-                Intent i = new Intent(Difficulty_Selection.this, Memory_Match.class);
-                i.putExtra("difficulty", difficulty);
-                startActivity(i);
-            }
+        medButton.setOnClickListener(v -> {
+            saveDifficulty("medium");
+            startActivity(new Intent(this, MenuScreen.class));
         });
 
-        hardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                difficulty = "hard";
-                Intent i = new Intent(Difficulty_Selection.this, Memory_Match.class);
-                i.putExtra("difficulty", difficulty);
-                startActivity(i);
-            }
+        hardButton.setOnClickListener(v -> {
+            saveDifficulty("hard");
+            startActivity(new Intent(this, MenuScreen.class));
         });
+    }
+
+    private void saveDifficulty(String difficulty){
+        SharedPreferences preferences = getSharedPreferences("Settings", MODE_PRIVATE);
+        preferences.edit().putString("difficulty", difficulty).apply();
     }
 }

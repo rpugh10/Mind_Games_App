@@ -5,6 +5,7 @@ import static com.example.mind_games_app.MenuScreen.CHANNEL_ID;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -61,7 +62,8 @@ public class SettingsScreen extends AppCompatActivity {
         difficultyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent i = new Intent(SettingsScreen.this, Difficulty_Selection.class);
+                startActivity(i);
             }
         });
 
@@ -79,6 +81,11 @@ public class SettingsScreen extends AppCompatActivity {
                 startActivity(menuIntent);
             }
         });
+
+        SharedPreferences prefs = getSharedPreferences("Settings", MODE_PRIVATE);
+        String currentDiff = prefs.getString("difficulty", "easy");
+
+        difficultyButton.setText("Difficulty: " + currentDiff);
 
     }
 
