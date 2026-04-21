@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +30,7 @@ public class WordScramble extends AppCompatActivity {
     private int attemptsLeft = 3;
     private boolean hintUsed = false;
     private boolean answered = false;
+    int timeLeft;
 
 
     private CountDownTimer countDownTimer;
@@ -42,8 +44,6 @@ public class WordScramble extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_scramble);
 
-        difficulty = getIntent().getStringExtra("DIFFICULTY");
-        if (difficulty == null) difficulty = "Easy";
 
         if (difficulty.equals("Medium")) timerSeconds = 20;
         else if (difficulty.equals("Hard")) timerSeconds = 12;
@@ -64,6 +64,17 @@ public class WordScramble extends AppCompatActivity {
 
 
         roundWords = WordData.getRoundWords();
+
+        SharedPreferences prefs = getSharedPreferences("Settings", MODE_PRIVATE);
+        difficulty = prefs.getString("difficulty", "easy");
+
+        if (difficulty.equals("easy")) {
+            timerSeconds = 30;
+        } else if (difficulty.equals("medium")) {
+            timerSeconds = 20;
+        } else {
+            timerSeconds = 12;
+        }
 
         btnSubmit.setOnClickListener(v -> handleSubmit());
         btnHint.setOnClickListener(v -> handleHint());
@@ -143,7 +154,6 @@ public class WordScramble extends AppCompatActivity {
             else if (attemptsLeft == 2) pointsEarned = 8;
             else pointsEarned = 3;
 
-            if (hintUsed) pointsEarned -= 5;
             if (pointsEarned < 0) pointsEarned = 0;
 
             score += pointsEarned;
@@ -180,7 +190,12 @@ public class WordScramble extends AppCompatActivity {
         etAnswer.setText(String.valueOf(word.charAt(0)));
         etAnswer.setSelection(etAnswer.getText().length());
 
-        tvFeedback.setText("Hint used! First letter: " + word.charAt(0));
+        score -= 5;
+        if (score < 0) score = 0;
+
+        tvScore.setText("Score: " + score);
+
+        tvFeedback.setText("Hint used! -5 points");
         tvFeedback.setTextColor(getColor(android.R.color.holo_orange_dark));
     }
 
@@ -201,8 +216,10 @@ public class WordScramble extends AppCompatActivity {
     }
 
     private void endGame() {
-        saveHighScore();
+        Log.d("LEADERBOARD_DEBUG", "END GAME TRIGGERED");
 
+        saveHighScore();
+        Log.d("SCORE_DEBUG", "Final score: " + score);
 
         Intent broadcastIntent = new Intent(GameOverReceiver.ACTION_GAME_OVER);
         broadcastIntent.putExtra("SCORE", score);
@@ -219,12 +236,17 @@ public class WordScramble extends AppCompatActivity {
         finish();
     }
 
+
+
     private void saveHighScore() {
+
         SharedPreferences prefs = getSharedPreferences("Leaderboard", MODE_PRIVATE);
 
-        Set<String> scoreSet = prefs.getStringSet("word_scramble_highscore", new HashSet<>());
+        Set<String> existingSet = prefs.getStringSet("word_scramble_high_score", new HashSet<>());
 
-        Set<String> newSet = new HashSet<>(scoreSet);
+        // IMPORTANT: make a REAL copy
+        Set<String> newSet = new HashSet<>();
+        newSet.addAll(existingSet);
 
         newSet.add(String.valueOf(score));
 
@@ -233,9 +255,7 @@ public class WordScramble extends AppCompatActivity {
             scoreList.add(Integer.parseInt(s));
         }
 
-
         Collections.sort(scoreList, Collections.reverseOrder());
-
 
         if (scoreList.size() > 5) {
             scoreList = scoreList.subList(0, 5);
@@ -245,8 +265,15 @@ public class WordScramble extends AppCompatActivity {
         for (int s : scoreList) {
             topSet.add(String.valueOf(s));
         }
+        Log.d("LEADERBOARD_DEBUG", "Saving score: " + score);
 
-        prefs.edit().putStringSet("word_scramble_high_score_", topSet).apply();
+        Log.d("LEADERBOARD_DEBUG", "Before save: " +
+                prefs.getStringSet("word_scramble_high_score", new HashSet<>()).toString());
+
+        prefs.edit().putStringSet("word_scramble_high_score", topSet).apply();
+
+        Log.d("LEADERBOARD_DEBUG", "After save: " +
+                prefs.getStringSet("word_scramble_high_score", new HashSet<>()).toString());
     }
 
     @Override

@@ -1,10 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".WordScramble">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_margin="65dp" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="24dp" android:gravity="center_horizontal" android:background="#F5F5F5">
+    <!--  Top bar: category + timer  -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+        <TextView android:id="@+id/tvCategory" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Category: Animal" android:textSize="14sp" android:textColor="#555555"/>
+        <TextView android:id="@+id/tvTimer" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="30s" android:textSize="16sp" android:textColor="#E53935" android:textStyle="bold"/>
+    </LinearLayout>
+    <!--  Question progress  -->
+    <TextView android:id="@+id/tvProgress" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Question 1 / 10" android:textSize="13sp" android:textColor="#888888" android:layout_marginBottom="8dp"/>
+    <!--  Score  -->
+    <TextView android:id="@+id/tvScore" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Score: 0" android:textSize="15sp" android:textColor="#333333" android:textStyle="bold" android:layout_marginBottom="20dp"/>
+    <!--  The scrambled word  -->
+    <TextView android:id="@+id/tvScrambled" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="ELPANETH" android:textSize="36sp" android:textColor="#1A237E" android:textStyle="bold" android:gravity="center" android:letterSpacing="0.2" android:layout_marginBottom="8dp"/>
+    <!--  Attempts left  -->
+    <TextView android:id="@+id/tvAttempts" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Attempts left: 3" android:textSize="13sp" android:textColor="#FF6F00" android:layout_marginBottom="24dp"/>
+    <!--  Answer input  -->
+    <EditText android:id="@+id/etAnswer" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Type your answer..." android:inputType="text" android:textSize="18sp" android:padding="12dp" android:background="@android:drawable/edit_text" android:layout_marginBottom="16dp"/>
+    <!--  Submit button  -->
+    <Button android:id="@+id/btnSubmit" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="SUBMIT" android:textSize="16sp" android:backgroundTint="#1A237E" android:textColor="#FFFFFF" android:layout_marginBottom="12dp"/>
+    <!--  Hint button  -->
+    <Button android:id="@+id/btnHint" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="HINT (-5 pts)" android:textSize="14sp" android:backgroundTint="#FF6F00" android:textColor="#FFFFFF" android:layout_marginBottom="20dp"/>
+    <!--  Feedback message (correct / wrong / time up)  -->
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Exit" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView android:id="@+id/tvFeedback" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="" android:textSize="15sp" android:gravity="center" android:textStyle="bold" android:layout_marginBottom="8dp"/>
+    <!--  Shows correct answer when player fails  -->
+    <TextView android:id="@+id/tvCorrectAnswer" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="" android:textSize="14sp" android:textColor="#B71C1C" android:gravity="center"/>
+</LinearLayout>

@@ -1,10 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".menu_screen">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/main"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MenuScreen"
+android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+<TextView
+    android:id="@+id/textView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="BRAIN GAMES"
+    android:layout_gravity="center"
+    android:textAlignment="center"
+    android:textSize="35sp"
+    android:textColor="@color/black" />
+
+<TextView
+    android:id="@+id/textView3"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Welcome New Player!"
+    android:textColor="@color/black"
+    android:gravity="center"
+    android:layout_marginTop="15dp"
+    android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/menuHighestScore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Highest Overall Score: "
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:layout_marginTop="15dp"
+        android:textSize="20sp"/>
+
+<Button
+    android:id="@+id/multiplicationPuzzleButton"
+    android:layout_width="250dp"
+    android:layout_height="60dp"
+    android:text="Multiplication Puzzle"
+    android:layout_marginTop="100dp"
+    android:layout_gravity="center"
+    android:textSize="17dp"/>
+
+<Button
+    android:id="@+id/memoryMatchButton"
+    android:layout_width="250dp"
+    android:layout_height="60dp"
+    android:text="Memory Match"
+    android:layout_marginTop="20dp"
+    android:layout_gravity="center"
+    android:textSize="17dp"/>
+
+<Button
+    android:id="@+id/wordScrambleButton"
+    android:layout_width="250dp"
+    android:layout_height="60dp"
+    android:text="Word Scramble"
+    android:layout_marginTop="20dp"
+    android:layout_gravity="center"
+    android:textSize="17dp"/>
+
+<Button
+    android:id="@+id/leaderboardButton"
+    android:layout_width="250dp"
+    android:layout_height="60dp"
+    android:text="LeaderBoard"
+    android:layout_marginTop="20dp"
+    android:layout_gravity="center"
+    android:textSize="17dp"/>
+
+<Button
+    android:id="@+id/settingsButton"
+    android:layout_width="250dp"
+    android:layout_height="60dp"
+    android:text="Settings"
+    android:layout_marginTop="20dp"
+    android:layout_gravity="center"
+    android:textSize="17dp"/>
+
+</LinearLayout>

@@ -7,6 +7,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -19,11 +22,19 @@ public class MainActivity extends AppCompatActivity {
         Button btnMedium     = findViewById(R.id.btnMedium);
         Button btnHard       = findViewById(R.id.btnHard);
 
-        SharedPreferences prefs = getSharedPreferences("brainzone_prefs", MODE_PRIVATE);
-        int bestEasy   = prefs.getInt("word_scramble_high_score_easy", 0);
-        int bestMedium = prefs.getInt("word_scramble_high_score_medium", 0);
-        int bestHard   = prefs.getInt("word_scramble_high_score_hard", 0);
-        int overallBest = Math.max(bestEasy, Math.max(bestMedium, bestHard));
+        SharedPreferences prefs = getSharedPreferences("Leaderboard", MODE_PRIVATE);
+
+        Set<String> scores = prefs.getStringSet("word_scramble_high_score", new HashSet<>());
+
+        int overallBest = 0;
+
+        for (String s : scores) {
+            int val = Integer.parseInt(s);
+            if (val > overallBest) {
+                overallBest = val;
+            }
+        }
+
         tvHighScore.setText("All-Time Best: " + overallBest);
 
         btnEasy.setOnClickListener(v -> launchGame("Easy"));

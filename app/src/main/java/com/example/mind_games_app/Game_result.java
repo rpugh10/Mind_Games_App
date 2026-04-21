@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.HashSet;
+import java.util.Set;
+
 public class Game_result extends AppCompatActivity {
 
     @Override
@@ -21,9 +25,17 @@ public class Game_result extends AppCompatActivity {
         if (difficulty == null) difficulty = "Easy";
 
 
-        SharedPreferences prefs = getSharedPreferences("brainzone_prefs", MODE_PRIVATE);
-        String key = "word_scramble_high_score_" + difficulty.toLowerCase();
-        int highScore = prefs.getInt(key, 0);
+        SharedPreferences prefs = getSharedPreferences("Leaderboard", MODE_PRIVATE);
+        Set<String> scoreSet = prefs.getStringSet("word_scramble_high_score", new HashSet<>());
+
+        int highScore = 0;
+
+        for (String s : scoreSet) {
+            int val = Integer.parseInt(s);
+            if (val > highScore) {
+                highScore = val;
+            }
+        }
 
 
         TextView tvGameName    = findViewById(R.id.tvGameName);
@@ -64,7 +76,7 @@ public class Game_result extends AppCompatActivity {
 
 
         btnHome.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, MenuScreen.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();

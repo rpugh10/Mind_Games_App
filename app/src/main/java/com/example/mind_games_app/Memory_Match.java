@@ -42,7 +42,7 @@ public class Memory_Match extends AppCompatActivity implements CardAdapter.OnMat
     Handler timerHandle = new Handler(); //Searched up a Youtube video about implementing a timer
     int seconds = 0;
     boolean running = false;
-    Button exit;
+    Button replay, menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,18 +61,10 @@ public class Memory_Match extends AppCompatActivity implements CardAdapter.OnMat
         recyclerView = findViewById(R.id.recyclerView);
         movesDisplay = findViewById(R.id.moves);
         timerDisplay = findViewById(R.id.timer);
-        exit = findViewById(R.id.button);
         score = findViewById(R.id.scores);
         startTimer();
 
 
-        exit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Memory_Match.this, MenuScreen.class);
-                startActivity(i);
-            }
-        });
         if(difficulty == null){
             difficulty = "easy";
         }
@@ -89,6 +81,8 @@ public class Memory_Match extends AppCompatActivity implements CardAdapter.OnMat
             totalCards = 20;
             pairs = 10;
         }
+
+        score.setText("Score: " + calculateScore());
         GridLayoutManager layoutManager = new GridLayoutManager(this, columns);
         recyclerView.setLayoutManager(layoutManager);
 
@@ -140,13 +134,18 @@ public class Memory_Match extends AppCompatActivity implements CardAdapter.OnMat
     }
 
     private int calculateScore(){
-        int base = pairs * 100;
+        int baseScore = pairs * 100;
+
         int movePenalty = moves * 5;
         int timePenalty = seconds * 2;
 
-        int finalScore = base - movePenalty - timePenalty;
+        int score = baseScore - movePenalty - timePenalty;
 
-        return Math.max(finalScore, 0);
+        if (score < 0) {
+            score = 0;
+        }
+
+        return score;
     }
 
 
@@ -154,6 +153,8 @@ public class Memory_Match extends AppCompatActivity implements CardAdapter.OnMat
     public void onMove(){
         moves++;
         movesDisplay.setText("Moves: " + moves);
+        int currentScore = calculateScore();
+        score.setText("Score: " + currentScore);
     }
 
     public void gameWon(){
@@ -186,6 +187,7 @@ public class Memory_Match extends AppCompatActivity implements CardAdapter.OnMat
         }
 
         prefs.edit().putStringSet("memory_scores", topSet).apply();
-        Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
+        Intent i = new Intent(Memory_Match.this, MemGameWinScreen.class);
+        startActivity(i);
     }
 }

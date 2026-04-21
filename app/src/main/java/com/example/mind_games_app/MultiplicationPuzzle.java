@@ -39,7 +39,6 @@ public class MultiplicationPuzzle extends AppCompatActivity {
     int answer;
     int questionNum;
     int points;
-    int highScore;
     int operator;
     int hardMissingNum;
     double missingNumRand;
@@ -182,9 +181,7 @@ public class MultiplicationPuzzle extends AppCompatActivity {
                                         }
                                         else {
                                             gameLooping = false;
-                                            if (highScore < points) {
-                                                highScore = points;
-                                            }
+                                            saveScore(points);
                                             // SHOW THE GAME RESULT SCREEN HERE
                                         }
                                     }
@@ -274,14 +271,11 @@ public class MultiplicationPuzzle extends AppCompatActivity {
                                                 }
                                             });
                                             run();
-                                        }
-                                        else {
+                                        }else{
                                             gameLooping = false;
-                                            if (highScore < points) {
-                                                highScore = points;
-                                            }
-                                            // SHOW THE GAME RESULT SCREEN HERE
+                                            saveScore(points);
                                         }
+
                                     }
                                 }
                             }
@@ -398,39 +392,7 @@ public class MultiplicationPuzzle extends AppCompatActivity {
                                         }
                                         else {
                                             gameLooping = false;
-                                            SharedPreferences prefs = getSharedPreferences("Leaderboard", MODE_PRIVATE);
-
-
-                                            Set<String> scoreSet = prefs.getStringSet("multiplication_highscore", new HashSet<>());
-
-
-                                            Set<String> newSet = new HashSet<>(scoreSet);
-
-
-                                            newSet.add(String.valueOf(highScore));
-
-
-                                            List<Integer> scoreList = new ArrayList<>();
-                                            for (String s : newSet) {
-                                                scoreList.add(Integer.parseInt(s));
-                                            }
-
-
-                                            Collections.sort(scoreList, Collections.reverseOrder());
-
-
-                                            if (scoreList.size() > 5) {
-                                                scoreList = scoreList.subList(0, 5);
-                                            }
-
-
-                                            Set<String> topSet = new HashSet<>();
-                                            for (int s : scoreList) {
-                                                topSet.add(String.valueOf(s));
-                                            }
-
-
-                                            prefs.edit().putStringSet("memory_scores", topSet).apply();
+                                            saveScore(points);
                                             // SHOW THE GAME RESULT SCREEN HERE
                                         }
                                     }
@@ -486,5 +448,34 @@ public class MultiplicationPuzzle extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void saveScore(int points) {
+        SharedPreferences prefs = getSharedPreferences("Leaderboard", MODE_PRIVATE);
+
+        Set<String> scoreSet = prefs.getStringSet("multiplication_highscore", new HashSet<>());
+        Set<String> newSet = new HashSet<>(scoreSet);
+
+        // add current score (NOT highScore)
+        newSet.add(String.valueOf(points));
+
+        List<Integer> scoreList = new ArrayList<>();
+        for (String s : newSet) {
+            scoreList.add(Integer.parseInt(s));
+        }
+
+        Collections.sort(scoreList, Collections.reverseOrder());
+
+        // keep only top 5
+        if (scoreList.size() > 5) {
+            scoreList = scoreList.subList(0, 5);
+        }
+
+        Set<String> topSet = new HashSet<>();
+        for (int s : scoreList) {
+            topSet.add(String.valueOf(s));
+        }
+
+        prefs.edit().putStringSet("multiplication_highscore", topSet).apply();
     }
 }
